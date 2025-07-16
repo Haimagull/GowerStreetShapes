@@ -1,9 +1,13 @@
-"""This script aims to evaluate DM halo shape distribution dependency on redshift variation. 
+"""
+This script aims to evaluate DM halo shape distribution dependency on redshift variation. 
 There is a limit number of particles of a halo set to 300, we only keep those with Np_halo > 300,
 based on the suggestions of https://doi.org/10.48550/arXiv.1203.6833 .
 One of the main goals is to study correlations between shapes.
+
 Oriane Laurens
-June 2025"""
+
+June 2025
+"""
 
 # IMPORTS
 import numpy as np
