@@ -13,4 +13,4 @@ Welcome to the Gower Street Shapes repository. Here you can find all of the code
 - **FOF to Covo** is a small script that converts a FOF output file into a csv readable by Covo, a 3D correlation code developped by Kai Hoffman, available on Bitbucket.
 - The **Correlation Functions** code is made to plot the correlation funcitons of chosen parameters from a Covo output.
 
-* = You better use an HPC to run these ones on multiple redshifts. I haven't found a way to optimise/parallelise this efficiently but the processing is very slow as it contains a loop to read each row of a binary file when reading the FOF output.
+  * = You better use an HPC to run these ones on multiple redshifts. I haven't found a way to optimise/parallelise this efficiently but the processing is very slow as it contains a loop to read each row of a binary file when reading the FOF output.
