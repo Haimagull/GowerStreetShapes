@@ -2,7 +2,7 @@
 
 Welcome to the Gower Street Shapes repository. Here you can find all of the codes I made to study Dark Matter halos shape and intrinsic alignment from Gower Street simulations outputs (FOF Outputs).
 
-**Contact :** Oriane.Laurens[at]etu.univ-grenoble-alpes.fr/oriane.laurens[at]outlook.fr
+**Contact :** _Oriane.Laurens[at]etu.univ-grenoble-alpes.fr/oriane.laurens[at]outlook.fr_
 
 ## Understanding shapes
 - **Halo Shaper** is a little side project that helps visualize the influence of semi-axis ratios parameters on an ellipsoid. It includes a projection code that allows to go from a 3D ellipsoid to a 2D ellipse projected with a "stick" (length = ellipticity module; angle = orientation, half of ellipticity argument).
