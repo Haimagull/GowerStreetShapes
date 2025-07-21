@@ -95,7 +95,7 @@ def get_data(time_slice, run):
         ys.append(position_cdm[i, 1]*box_size)
         zs.append(position_cdm[i, 2]*box_size)
         #eigenvect = axis_vect(time_slice)
-        eigenvect_a = row[0,:]
+        eigenvect_a = row[0,:] #get first vector, here it is semi-minor axis c. If you want b use [1,:] or a use [2,:]
         inertia = inertia_vect[i, :]
         ax = eigenvect_a[0]
         axs.append(ax)
@@ -123,12 +123,7 @@ def get_data(time_slice, run):
     data_file = pd.DataFrame(halo_data)
     data_file.to_csv(f'covo_typefile_{run}_{time_slice}_aI.csv', index=False, header=False)
 
-#RUN FOR TIME SLICES
-#times = [str(i).zfill(5) for i in range(20, 22)]
-#for time_slice in times :
-#    get_data(time_slice)
-
-#runs = ['run243', 'run273', 'run333', 'run355', 'run394', 'run378', 'run552', 'run563', 'run564', 'run765']
+# EXECUTION
 runs = ['run273', 'run333', 'run355', 'run378', 'run394']
 for run in runs :
     get_data(time_slice='00100', run=run)
