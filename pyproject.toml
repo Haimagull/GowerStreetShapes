@@ -9,7 +9,7 @@ description = "Compute shapes from fof outputs (based on Gower Street Simulation
 readme = "README.md"
 license = {file = "LICENSE"}
 authors = [
-  { name="Oriane Laurens, Astropphysics masters student", email="oriane.laurens@outlook.fr" }
+  { name="Oriane Laurens, Astrophysics masters student", email="oriane.laurens@outlook.fr" }
 ]
 requires-python = ">=3.8"
 dependencies = ["numpy", "scipy","covo", "treecorr", "astropy", "pandas"]                     
