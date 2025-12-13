@@ -3,7 +3,7 @@ requires = ["setuptools>=61.0"]
 build-backend = "setuptools.build_meta"
 
 [project]
-name = "GowerStreetShapes"                # The package name on PyPI (must be unique)
+name = "GowerStreetShapes"                # The project name on PyPI (must be unique)
 version = "0.1.0"                         # Matches __version__ in __init__.py
 description = "Compute shapes from fof outputs (based on Gower Street Simulations)"
 readme = "README.md"
