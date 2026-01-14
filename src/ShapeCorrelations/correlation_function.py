@@ -11,13 +11,8 @@ from astropy import units as u
 import math
 mp.rcParams['agg.path.chunksize'] = 10000 # to adjust size (suggested by a previous error)
 
-# READING THE COVO OUTPUT FILE
-file_name = f"/path/to/file" #koki
-print("About to read {}".format(file_name))
-data = pd.read_csv(file_name, sep='\s+')
-
 # GET CORRELATION DATA
-def plot_data_correl():
+def plot_data_correl(data):
     shift = .5
     r = data.iloc[:, 1] #distance
     r12_v1a = data.iloc[:, 3] - shift #correlation vector a shifted
@@ -42,6 +37,11 @@ def plot_data_correl():
     plt.tight_layout()
     plt.savefig(f"correlation_functions_-.5_z0_run394_plot.png", dpi = 300)
 
+# READING THE COVO OUTPUT FILE
+file_name = str(input("Please, indicate the path to your covo correlation output :"))
+print("About to read {}".format(file_name))
+data = pd.read_csv(file_name, sep='\s+')
+
 # EXECUTION
-plot_data_correl()
+plot_data_correl(data)
 

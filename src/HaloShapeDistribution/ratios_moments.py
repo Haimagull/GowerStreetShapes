@@ -26,8 +26,9 @@ import csv
 import os
 
 # CALCULATING PARTICLE MASS
-def run_control_par(run) :# reading control.par file from run
-    file_name = f"/share/testde/ucapwhi/GowerStreetExtendedSims/runsW/{run}/control.par"
+def run_control_par(control_path):#run) :# reading control.par file from run
+    #file_name = f"/share/testde/ucapwhi/GowerStreetExtendedSims/runsW/{run}/control.par"
+    file_name = control_path
     variable = {}
     print("About to read {}".format(file_name))
     with open(file_name, "r") as in_file :
@@ -46,13 +47,13 @@ def moments(ratio) : #moments(time_slice, run, ratio) : #ratio is r_ca_data or r
     return mean, variance, skewness
     
 # READING REDSHIFT VALUES
-def read_z_values(run):
-    file_name = f'/share/testde/ucapwhi/GowerStreetExtendedSims/runsW/{run}/z_values.txt'
+def read_z_values(z_values_path):#run):
+    file_name = z_values_path #f'/share/testde/ucapwhi/GowerStreetExtendedSims/runsW/{run}/z_values.txt'
     data = np.genfromtxt(file_name, delimiter=',')#, names=True, dtype=None, encoding='utf-8')
     return data[:, 2]
   
 # READING THE FOF FILE
-def fof_file_format_experiment(time_slice, run) :
+def fof_file_format_experiment(time_slice, run, runs_path) :
     fof_type = np.dtype([
        ('position_of_deepest_potential', np.float32, (3,)),
        ('deepest_potential', np.float32, 1),
@@ -67,19 +68,20 @@ def fof_file_format_experiment(time_slice, run) :
        ('mass_env_0', np.float32, 1),
        ('mass_env_1', np.float32, 1), 
        ('half_mass_radius', np.float32, 1)])
-    file_name = f"/share/testde/ucapwhi/GowerStreetExtendedSims/runsW/{run}/fof/run.{time_slice}.fofstats.0"
+    sub_path = f"/{run}/fof/run.{time_slice}.fofstats.0"
+    file_name = runs_path + sub_path #f"/share/testde/ucapwhi/GowerStreetExtendedSims/runsW/{run}/fof/run.{time_slice}.fofstats.0"
     print("About to read {}".format(file_name))
     with open(file_name, "rb") as in_file:
         data = np.fromfile(in_file, dtype = fof_type)
     print(data.shape)
     return data
 
-def particle_mass(run, data) :
+def particle_mass(run, data, control_path) :
     """This function gives particle mass"""
     # Get halo mass
     mass = data['mass']
     # Get parameters from control.par (dBoxSize in Mpc/h)
-    dBoxSize, nGrid, dOmega0, h = run_control_par(run)
+    dBoxSize, nGrid, dOmega0, h = run_control_par(control_path)
     # Calc.
     G_c = 1#const.G #m3 / (kg s2); Gravi.const. = 6.6743e-11 w/ uncertainty = 1.5e-15
     H = h*100*(u.km / u.s / u.Mpc)
@@ -89,10 +91,10 @@ def particle_mass(run, data) :
     return M_part #Particle mass in Msun
 
 # GET RATIOS FROM SEMI-AXIS AND INERTIA MATRIX
-def axis_ratio(run, data) :
+def axis_ratio(run, data, control_path) :
     mass = data['mass']*u.Msun
     inertia = data['moment_of_inertia']
-    M_part = particle_mass(run, data)
+    M_part = particle_mass(run, data, control_path)
     r_ca_data=[] #list of c/a values
     r_ba_data=[] #list of b/a values
     for i,row in enumerate(inertia) :
@@ -120,8 +122,8 @@ def axis_ratio(run, data) :
     return r_ca_data, r_ba_data
 
 # PLOT MOMENTS
-def plot_moments(times, run) :
-    redshift_val = read_z_values(run)
+def plot_moments(times, run, z_values_path) :
+    redshift_val = read_z_values(z_values_path)
     if len(times) != len(redshift_val):
         raise ValueError(f"{len(times)} time slices but {len(redshift_val)} redshifts, must be the same length")
     means_r_ca, vars_r_ca, skews_r_ca = [], [], []
@@ -137,8 +139,8 @@ def plot_moments(times, run) :
         writer = csv.writer(file)
         writer.writerow(["TimeSlice", "Redshift", "Mean_c/a", "Var_c/a", "Skew_c/a", "Mean_b/a", "Var_b/a", "Skew_b/a"])
         for time_slice, z in zip(times, redshift_val) :
-            data = fof_file_format_experiment(time_slice, run) 
-            r_ca_data, r_ba_data = axis_ratio(run, data)
+            data = fof_file_format_experiment(time_slice, run, runs_path) 
+            r_ca_data, r_ba_data = axis_ratio(run, data, control_path)
             mean_r_ca, var_r_ca, skew_r_ca = moments(r_ca_data)
             mean_r_ba, var_r_ba, skew_r_ba = moments(r_ba_data)
             means_r_ca.append(mean_r_ca)
@@ -151,8 +153,22 @@ def plot_moments(times, run) :
             writer.writerow([time_slice, z, mean_r_ca, var_r_ca, skew_r_ca, mean_r_ba, var_r_ba, skew_r_ba])
 
 # EXECUTION
-runs = ['run243','run355'] #example
+print("Warning : Simulations fof outputs of each run must be organised the following way : /run/fof/run.time_slice.fofstats.0")
+#print("If you")
+control_path = str(input("Please, indicate the path to your control.par file :"))
+z_values_path = str(input(("Please, indicate the path to your z_values.txt file :")))
+runs_path = str(input("Please, indicate the path to your runs :"))
+print("Please, indicate the names of your chosen runs (e.g. [run243, run344, run566]), when you finish type 'stop' and enter.")
+runs = []
+var = ""
+while var != "stop" :
+    var = input("->")
+    if var == "" :
+        continue
+    runs.append(var)
+runs.pop()
+    
 for run in runs :
     times = [str(i).zfill(5) for i in range(1, 101)] #loops inside the function
-    plot_moments(times, run)
+    plot_moments(times, run, z_values_path)
 

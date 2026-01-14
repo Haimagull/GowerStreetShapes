@@ -64,24 +64,24 @@ def decision() :
     (4) shapez : generates csv file with semi axis of halos at each redshift. Avoids great computing time when later trying to plot.
     (5) corrfunction : plot correlation functions from Covo output.
     (6) foftocovo : converts a FOF output into csv readable by Covo (3D correlation code, Kai Hoffman, on Bitbucket).
-    (7) foftoIACorr : coming soon...
+    (7) foftoIACorr : converts a FOF output into csv readable by IACorr (ellipticity correlation code using treecorr, elisabethjg, on Github).
     """
     print(options)
     number = int(input("Please, indicate what you want to use with its number: "))
     if number == 1 :
-        subprocess.run([sys.executable, "src/UnderstandingShapes/HaloShaper.py"])
+        subprocess.run([sys.executable, "GowerStreetShapes/src/UnderstandingShapes/HaloShaper.py"])
     elif number == 2 :
-        subprocess.run([sys.executable, "src/HaloShapeDistribution/ratios_moments.py"])
+        subprocess.run([sys.executable, "GowerStreetShapes/src/HaloShapeDistribution/ratios_moments.py"])
     elif number == 3 :
-        subprocess.run([sys.executable, "src/HaloShapeDistribution/shape_distribution_z.py"])
+        subprocess.run([sys.executable, "GowerStreetShapes/src/HaloShapeDistribution/shape_distribution_z.py"])
     elif number == 4 :
-        subprocess.run([sys.executable, "src/HaloShapeDistribution/shape_z.py"])
+        subprocess.run([sys.executable, "GowerStreetShapes/src/HaloShapeDistribution/shape_z.py"])
     elif number == 5 :
-        subprocess.run([sys.executable, "src/ShapeCorrelations/correlation_function.py"])
+        subprocess.run([sys.executable, "GowerStreetShapes/src/ShapeCorrelations/correlation_function.py"])
     elif number == 6 :
-        subprocess.run([sys.executable, "src/ShapeCorrelations/fof_to_covo.py"])
+        subprocess.run([sys.executable, "GowerStreetShapes/src/ShapeCorrelations/fof_to_covo.py"])
     elif number == 7 :
-            print("Not available yet...")
+        subprocess.run([sys.executable, "GowerStreetShapes/src/ShapeCorrelations/fof_to_IACorr.py"])
 
 if __name__ == "__main__" :
     welcome()

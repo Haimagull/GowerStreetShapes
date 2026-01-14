@@ -20,7 +20,7 @@ mp.rcParams['agg.path.chunksize'] = 10000 # to adjust size (suggested by a previ
 
 # READING THE FOF FILE
 
-def fof_file_format_experiment(time_slice, run) :
+def fof_file_format_experiment(time_slice, run, runs_path) :
     fof_type = np.dtype([
        ('position_of_deepest_potential', np.float32, (3,)),
        ('deepest_potential', np.float32, 1),
@@ -35,7 +35,8 @@ def fof_file_format_experiment(time_slice, run) :
        ('mass_env_0', np.float32, 1),
        ('mass_env_1', np.float32, 1), 
        ('half_mass_radius', np.float32, 1)])
-    file_name = f"/share/testde/ucapwhi/GowerStreetExtendedSims/runsW/{run}/fof/run.{time_slice}.fofstats.0"
+    sub_path = f"/{run}/fof/run.{time_slice}.fofstats.0"
+    file_name = runs_path + sub_path
     print("About to read {}".format(file_name))
     with open(file_name, "rb") as in_file:
         data = np.fromfile(in_file, dtype = fof_type)
@@ -43,10 +44,8 @@ def fof_file_format_experiment(time_slice, run) :
     return data
 
 # GET BOX SIZE
-def box_size_function(run) :# reading control.par file from run
-    #file_name = f"/share/testde/ucapwhi/GowerStreetExtendedSims/runsW/{run}/control.par"
-    file_name = f"/import/home/visitor1/covo/covo/Gowersims/runsW/{run}/control.par"
-    #file_name = f"/import/home/visitor1/control.par"
+def box_size_function(run, control_path) :# reading control.par file from run
+    file_name = control_path
     variable = {}
     print("About to read {}".format(file_name))
     with open(file_name, "r") as in_file :
@@ -55,8 +54,8 @@ def box_size_function(run) :# reading control.par file from run
     return dBoxSize
 
 # GET RATIOS FROM SEMI-AXIS AND INERTIA MATRIX
-def axis_vect(time_slice, run) :
-    data = fof_file_format_experiment(time_slice, run)
+def axis_vect(time_slice, run, runs_path) :
+    data = fof_file_format_experiment(time_slice, run, runs_path)
     inertia = data['moment_of_inertia'] #'loading' inertia tensor file data
     eigenvects = []
     mass = data['mass']
@@ -75,12 +74,12 @@ def axis_vect(time_slice, run) :
     return eigenvects
 
 # STORE DATA FOR COVO
-def get_data(time_slice, run):
-    data = fof_file_format_experiment(time_slice, run)
+def get_data(time_slice, run, runs_path, control_path):
+    data = fof_file_format_experiment(time_slice, run, runs_path)
     position_cdm = data['position_of_centre_of_mass']
     inertia_vect = data['moment_of_inertia']
-    box_size = box_size_function(run)
-    eigenvects = axis_vect(time_slice, run)
+    box_size = box_size_function(run, control_path)
+    eigenvects = axis_vect(time_slice, run, runs_path)
     xs = []
     ys = []
     zs = []
@@ -94,7 +93,6 @@ def get_data(time_slice, run):
         xs.append(position_cdm[i, 0]*box_size)
         ys.append(position_cdm[i, 1]*box_size)
         zs.append(position_cdm[i, 2]*box_size)
-        #eigenvect = axis_vect(time_slice)
         eigenvect_a = row[0,:] #get first vector, here it is semi-minor axis c. If you want b use [1,:] or a use [2,:]
         inertia = inertia_vect[i, :]
         ax = eigenvect_a[0]
@@ -124,6 +122,10 @@ def get_data(time_slice, run):
     data_file.to_csv(f'covo_typefile_{run}_{time_slice}_aI.csv', index=False, header=False)
 
 # EXECUTION
-runs = ['run273', 'run333', 'run355', 'run378', 'run394']
-for run in runs :
-    get_data(time_slice='00100', run=run)
+print("Warning : Simulations fof outputs of each run must be organised the following way : /run/fof/run.time_slice.fofstats.0")
+control_path = str(input("Please, indicate the path to your control.par file :"))
+runs_path = str(input("Please, indicate the path to your runs :"))
+print("Please, indicate the names of your chosen runs (e.g. [run243, run344, run566]), when you finish type 'stop' and enter.")
+run = str(input("Please indicate the chosen run (e.g. run243) :"))
+time_slice = str(input("Please indicate the chosen time slice :")).zfill(5)
+get_data(time_slice=time_slice, run=run, runs_path=runs_path, control_path=control_path)

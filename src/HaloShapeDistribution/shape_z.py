@@ -20,8 +20,8 @@ import os
 import csv
 
 # CALCULATING PARTICLE MASS
-def run_control_par(run) :# reading control.par file from run
-    file_name = f"/share/testde/ucapwhi/GowerStreetExtendedSims/runsW/{run}/control.par"
+def run_control_par(control_path) :# reading control.par file from run
+    file_name = control_path
     variable = {}
     print("About to read {}".format(file_name))
     with open(file_name, "r") as in_file :
@@ -32,8 +32,8 @@ def run_control_par(run) :# reading control.par file from run
     h = variable["h"]
     return dBoxSize, nGrid, dOmega0, h
 
-def read_z_values(run):
-    file_name = f'/share/testde/ucapwhi/GowerStreetExtendedSims/runsW/{run}/z_values.txt'
+def read_z_values(z_values_path):
+    file_name = z_values_path
     data = np.genfromtxt(file_name, delimiter=',')#, names=True, dtype=None, encoding='utf-8')
     return data[:, 2]
 
@@ -60,12 +60,12 @@ def fof_file_format_experiment(time_slice, run) :
         data = np.fromfile(in_file, dtype = fof_type)
     return data
 
-def particle_mass(run, data) :
+def particle_mass(run, data, control_path) :
     """This function gives particle mass"""
     # Get halo mass
     mass = data['mass']
     # Get parameters from control.par (dBoxSize in Mpc/h)
-    dBoxSize, nGrid, dOmega0, h = run_control_par(run)
+    dBoxSize, nGrid, dOmega0, h = run_control_par(control_path)
     # Calc.
     G_c = 1#const.G #m3 / (kg s2); Gravi.const. = 6.6743e-11 w/ uncertainty = 1.5e-15
     H = h*100*(u.km / u.s / u.Mpc)
@@ -75,10 +75,10 @@ def particle_mass(run, data) :
     return M_part #Particle mass in Msun
 
 # GET RATIOS FROM SEMI-AXIS AND INERTIA MATRIX
-def shape(run, data, time_slice, redshift_val) : 
+def shape(run, data, time_slice, redshift_val, control_path) : 
     mass = data['mass']*u.Msun
     inertia = data['moment_of_inertia']
-    M_part = particle_mass(run, data)
+    M_part = particle_mass(run, data, control_path)
     output_dir = os.path.join("results", run, time_slice) #output directory to save results
     os.makedirs(output_dir, exist_ok=True) #check it exists
     output_file = os.path.join(output_dir, f"shape_{run}_{time_slice}.csv") #output file
@@ -105,13 +105,16 @@ def shape(run, data, time_slice, redshift_val) :
                 continue
         print(f"Time slice {time_slice} in run {run} processed :)")
 
-def get_run_shapes(run) :
+def get_run_shapes(run, control_path, z_values_path) :
     times = [str(i).zfill(5) for i in range(1, 101)]
-    redshift_val = read_z_values(run)
+    redshift_val = read_z_values(z_values_path)
     for time_slice,z in zip(times, redshift_val) :
         data = fof_file_format_experiment(time_slice, run)
-        shape(run, data, time_slice=time_slice, redshift_val=redshift_val)
+        shape(run, data, time_slice=time_slice, redshift_val=redshift_val, control_path=control_path)
 
 # EXECUTION
-get_run_shapes(run='run???')
-
+print("Warning : Simulations fof outputs of each run must be organised the following way : /run/fof/run.time_slice.fofstats.0")
+control_path = str(input("Please, indicate the path to your control.par file :"))
+z_values_path = str(input(("Please, indicate the path to your z_values.txt file :")))
+run_path = str(input("Please, indicate the name to the run : (e.g. run243)"))
+get_run_shapes(run_path, control_path, z_values_path)
