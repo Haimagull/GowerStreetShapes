@@ -15,6 +15,7 @@ Welcome to the Gower Street Shapes repository. Here you can find all of the code
 ## Shape correlations
 - **FOF to Covo** is a small script that converts a FOF output file into a csv readable by Covo, a 3D correlation code developped by Kai Hoffman, available on Bitbucket.
 - The **Correlation Functions** code is made to plot the correlation functions of chosen parameters from a Covo output.
+- **FOF to IACorr** is a script that converts a FOF output file into a csv readable by IACorr, an ellipticity correlation code developped by Elisabeth JD, available on Github (https://github.com/elizabethjg/IACorr).
 
 **Note on covo usage** : To run it, type : ./covo covo.params_parameter-file-ID
 
