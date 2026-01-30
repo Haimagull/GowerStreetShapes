@@ -13,7 +13,7 @@ Welcome to the Gower Street Shapes repository. Here you can find all of the code
 - The **Ratios Moments** * code is made to calculate the main first order moments such as mean, variance and skewness with error bars to visualise statistically the evolution across redshift rather than visually with the video that can be hard to use to compare different runs. You can change it to use the previous Shape code's outputs.
 
 ## Shape correlations
-- **FOF to Covo** is a small script that converts a FOF output file into a csv readable by Covo, a 3D correlation code developped by Kai Hoffman, available on Bitbucket.
+- **FOF to Covo** is a small script that converts a FOF output file into a csv readable by Covo, a 3D correlation code developped by Kai Hoffman, available on Github (https://github.com/kaidhoffmann/covo) and Bitbucket.
 - The **Correlation Functions** code is made to plot the correlation functions of chosen parameters from a Covo output.
 - **FOF to IACorr** is a script that converts a FOF output file into a csv readable by IACorr, an ellipticity correlation code developped by Elisabeth JD, available on Github (https://github.com/elizabethjg/IACorr).
 
